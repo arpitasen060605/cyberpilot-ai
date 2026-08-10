@@ -22,8 +22,15 @@ def investigate_ip(ip_address: str):
     vt_response = requests.get(url, headers=headers)
     vt_data = vt_response.json()
 
-    ai_summary = get_ai_summary(vt_data)
-    return {"raw_data": vt_data, "ai_summary": ai_summary}
+    abuse_data = check_abuseipdb(ip_address)
+
+    combined_data = {
+        "virustotal": vt_data,
+        "abuseipdb": abuse_data
+    }
+
+    ai_summary = get_ai_summary(combined_data)
+    return {"raw_data": combined_data, "ai_summary": ai_summary}
 
 
 def get_ai_summary(vt_data):
@@ -36,3 +43,17 @@ def get_ai_summary(vt_data):
         contents= prompt
     )
     return response.text
+
+def check_abuseipdb(ip_address):
+    ABUSEIPDB_API_KEY = os.getenv("ABUSEIPDB_API_KEY")
+    headers= {
+        "Key": ABUSEIPDB_API_KEY,
+        "Accept": "application/json"
+    }
+    url = f"https://api.abuseipdb.com/api/v2/check"
+    params = {
+        "ipAddress": ip_address,
+    }
+    response = requests.get(url, headers= headers, params= params)
+    return response.json()
+
