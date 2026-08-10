@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from dotenv import load_dotenv
 from google import genai
+from fastapi.middleware.cors import CORSMiddleware
 import requests
 import os
 
@@ -8,6 +9,14 @@ load_dotenv()
 
 VT_API_KEY = os.getenv("VT_API_KEY")
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/health")
 def health_check():
