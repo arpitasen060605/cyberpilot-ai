@@ -1,0 +1,26 @@
+{
+  "T1110": {
+    "name": "Brute Force",
+    "description": "Repeatedly guessing passwords or credentials to gain unauthorized access to an account."
+  },
+  "T1078": {
+    "name": "Valid Accounts",
+    "description": "Using legitimate, stolen, or compromised credentials to gain or maintain access, often to blend in with normal activity."
+  },
+  "T1071": {
+    "name": "Application Layer Protocol",
+    "description": "Using standard protocols like HTTP or DNS to communicate with a command-and-control server, hiding traffic among normal network activity."
+  },
+  "T1003": {
+    "name": "OS Credential Dumping",
+    "description": "Extracting stored credentials, password hashes, or authentication tokens from an operating system."
+  },
+  "T1059": {
+    "name": "Command and Scripting Interpreter",
+    "description": "Abusing tools like PowerShell, cmd.exe, or bash to execute commands and scripts on a system."
+  },
+  "T1021": {
+    "name": "Remote Services",
+    "description": "Using legitimate remote access services like SSH or RDP to move laterally between systems on a network."
+  }
+}

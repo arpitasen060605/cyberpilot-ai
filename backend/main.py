@@ -4,6 +4,7 @@ from google import genai
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import UploadFile, File
 import requests
+import json
 import os
 
 load_dotenv()  
@@ -57,7 +58,8 @@ async def investigate_log(file:UploadFile = File(...)):
     contents = await file.read()   
     log_text = contents.decode("utf-8")
     analysis = get_log_analysis(log_text) 
-    return {"log_analysis": analysis}
+    mitre_mapping = map_to_mitre(analysis)
+    return {"log_analysis": analysis, "mitre_mapping": mitre_mapping}
 
 def get_log_analysis(log_text):
     client = genai.Client(api_key=GEMINI_API_KEY)
@@ -117,3 +119,21 @@ def get_cve_explanation(cve_data):
         contents=prompt
     )
     return response.text
+
+def map_to_mitre(investigation_text):
+    with open("mitre_techniques.json", "r") as f:
+        mitre_data = json.load(f)
+
+    prompt = f"""You are a SOC analyst. Given this list of MITRE ATT&CK techniques and this investigation summary, identify which techniques (if any) apply. Only use technique IDs from the provided list — do not invent new ones.
+
+    MITRE techniques: {mitre_data}
+
+    Investigation summary: {investigation_text}"""
+
+    client = genai.Client(api_key=GEMINI_API_KEY)
+    response = client.models.generate_content(
+        model="gemini-3.5-flash",
+        contents=prompt
+    )
+    return response.text
+
