@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from dotenv import load_dotenv
 from google import genai
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import UploadFile, File
 import requests
 import os
 
@@ -50,6 +51,24 @@ def explain_cve(cve_id: str):
         "raw_data": cve_data,
         "ai_explanation": explanation
     }
+
+@app.post("/investigate/log")
+async def investigate_log(file:UploadFile = File(...)):
+    contents = await file.read()   
+    log_text = contents.decode("utf-8")
+    analysis = get_log_analysis(log_text) 
+    return {"log_analysis": analysis}
+
+def get_log_analysis(log_text):
+    client = genai.Client(api_key=GEMINI_API_KEY)
+    prompt = f"""You are a SOC analyst. Provide a detailed analysis of the given log data, including suspicious events, timeline, attack type, severity, affected systems and recommended actions.
+    Log data: {log_text}"""
+    response = client.models.generate_content(
+        model="gemini-3.5-flash",
+        contents=prompt
+    )
+    return response.text
+
 
 def get_ai_summary(vt_data):
     client = genai.Client(api_key=GEMINI_API_KEY)
