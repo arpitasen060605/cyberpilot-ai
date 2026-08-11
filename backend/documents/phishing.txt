@@ -1,0 +1,21 @@
+Phishing- It is a cyberattack where scammers send fraudulent messages designed to trick you into revealing sensitive information, clicking a malicious link, or downloading harmful malware.
+The attackers disguise themselves as trusted institutions, like your bank, employer, or a government agency to lower your guard.
+
+Core Types of Phishing
+Mass Phishing: Blasted to thousands of random people hoping a few fall for it.
+Spear Phishing: Highly targeted emails tailored specifically to one individual using personal details.
+Whaling: Targeted attacks aimed exclusively at high-level executives or CEOs.
+Smishing / Vishing: Phishing conducted via SMS text messages (smishing) or phone calls (vishing).
+
+Red Flags to Watch For
+Urgent Language: Demands immediate action with threats of account suspension or financial loss.
+Mismatched Sender Addresses: The display name looks official, but the actual email address is generic or misspelled.
+Generic Greetings: Messages starting with "Dear Customer" instead of your actual name.
+Suspicious Links / Attachments: Hyperlinks that do not match the official website or unexpected file attachments.
+
+How to Protect Yourself
+Verify Directly: Never click a link in an email; type the official website directly into your browser.
+Use MFA: Turn on Multi-Factor Authentication so attackers cannot log in even if they steal your password.
+Check the URL: Look closely at the domain name for subtle typos or extra characters.
+Report and Delete: Use your email provider's reporting tool to flag suspicious messages instantly.
+

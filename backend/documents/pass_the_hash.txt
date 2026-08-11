@@ -1,0 +1,24 @@
+Pass The Hash Attack- It is a cyberhacking technique where attacker steal a user's hashed password and reuses it to log into other network systems.
+It lets the attacker gain access without needing to know or decode the actual plain text password.
+ 
+ How the Attack Works
+ Initial Access: The hacker breaks into a single computer on a network using malware or a phishing trick.
+ Stealing Hashes: The attacker searches the computer's active memory or security files to find stored password hashes (such as NTLM hashes).
+ Reusing the Hash: Instead of typing a password, the hacker "passes" the stolen hash directly to another server or service on the network.
+ Moving Around: If the system accepts the hash as valid, the hacker gains entry and moves deeper into the network to find higher-level admin accounts.
+
+ Why It Happens
+ Static Values: Windows and other systems use password hashes that stay the same from one login session to the next until the user changes their password.
+ Single Sign-On Design: Systems trust the math behind the hash verification, meaning whoever holds the correct hash is treated as the real user.
+
+Key Event IDs to Monitor
+Event ID 4624 (Successful Logon): Look for Logon Type 3 (Network) paired with Authentication Package NTLM.
+Event ID 4624 (Target Type): Watch for an elevated or administrator account logging in via a network logon type rather than an interactive type.
+Event ID 4625 (Failed Logon): Check for sudden spikes in failed NTLM login attempts across multiple workstations.
+Event ID 7045 (Service Creation): Watch for new services created immediately after a type 3 logon, which often indicates tools like PsExec are executing commands remotely.
+
+Detection Strategies
+Baseline Local Admin Activity: Flag any instance where a local administrator account connects to a remote workstation over the network.
+Track Workstation-to-Workstation Traffic: Normal workstations rarely connect directly to each other; block or alert on this "lateral movement."
+Monitor Process Execution: Use toolings like Sysmon to watch for unexpected processes (like cmd.exe or powershell.exe) spawned by network logon services.
+Deploy Endpoint Detection (EDR): Set up EDR alerts for LSASS memory dumping or unauthorized reading of the SAM database.
