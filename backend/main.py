@@ -3,6 +3,8 @@ from dotenv import load_dotenv
 from google import genai
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import UploadFile, File
+from fastapi.responses import FileResponse
+from fpdf import FPDF
 import requests
 import chromadb
 import json
@@ -99,6 +101,36 @@ def chat_investigation(investigation_context: str, question: str):
         contents=prompt
     )
     return {"answer": response.text}
+
+@app.post("/report/generate")
+def generate_report(summary: str, mitre_mapping: str, recommendations: str):
+    pdf = FPDF()
+    pdf.add_page()
+
+    pdf.set_font("Helvetica", "B", 16)
+    pdf.cell(0, 10, text="CyberPilot AI - Incident Report", ln=True)
+    pdf.ln(5)
+
+    pdf.set_font("Helvetica", "B", 12)
+    pdf.cell(0, 10, text="Executive Summary", ln=True)
+    pdf.set_font("Helvetica", size=11)
+    pdf.multi_cell(0, 8, text=summary)
+    pdf.ln(5)
+
+    pdf.set_font("Helvetica", "B", 12)
+    pdf.cell(0, 10, text="MITRE ATT&CK Mapping", ln=True)
+    pdf.set_font("Helvetica", size=11)
+    pdf.multi_cell(0, 8, text=mitre_mapping)
+    pdf.ln(5)
+
+    pdf.set_font("Helvetica", "B", 12)
+    pdf.cell(0, 10, text="Recommended Actions", ln=True)
+    pdf.set_font("Helvetica", size=11)
+    pdf.multi_cell(0, 8, text=recommendations)
+
+    pdf.output("report.pdf")
+
+    return FileResponse("report.pdf", filename="incident_report.pdf")
 
 def get_log_analysis(log_text):
     client = genai.Client(api_key=GEMINI_API_KEY)
