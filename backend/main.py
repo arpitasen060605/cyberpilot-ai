@@ -4,6 +4,7 @@ from google import genai
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import UploadFile, File
 import requests
+import chromadb
 import json
 import os
 
@@ -20,6 +21,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+chroma_client = chromadb.PersistentClient(path="./chroma_db")
+collection = chroma_client.get_or_create_collection(name= "threat_intel")
 
 @app.get("/health")
 def health_check():
@@ -60,6 +64,26 @@ async def investigate_log(file:UploadFile = File(...)):
     analysis = get_log_analysis(log_text) 
     mitre_mapping = map_to_mitre(analysis)
     return {"log_analysis": analysis, "mitre_mapping": mitre_mapping}
+
+@app.post("/chat")
+def chat(question: str):
+    results = collection.query(
+        query_texts = [question],
+        n_results = 2
+    )
+    retrieved_chunks = results["documents"][0]
+    context = "\n\n".join(retrieved_chunks)
+
+    prompt = f"""You are a threat intelligence assistant. Answer the user's question using ONLY the given context. If the context doesn't contain enough information to answer, say so honestly rather than guessing.
+    Context: {context}
+    Question: {question}"""
+
+    client = genai.Client(api_key=GEMINI_API_KEY)
+    response = client.models.generate_content(
+        model="gemini-3.5-flash",
+        contents= prompt
+    )
+    return {"answer": response.text, "source_used": results["ids"][0]}
 
 def get_log_analysis(log_text):
     client = genai.Client(api_key=GEMINI_API_KEY)
