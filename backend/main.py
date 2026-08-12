@@ -85,6 +85,21 @@ def chat(question: str):
     )
     return {"answer": response.text, "source_used": results["ids"][0]}
 
+@app.post("/chat/investigation")
+def chat_investigation(investigation_context: str, question: str):
+    prompt = f"""You are a SOC analyst assistant helping investigate this data:
+
+    {investigation_context}
+
+    Based on this investigation, answer the analyst's question: {question}"""
+
+    client = genai.Client(api_key=GEMINI_API_KEY)
+    response = client.models.generate_content(
+        model="gemini-3.5-flash",
+        contents=prompt
+    )
+    return {"answer": response.text}
+
 def get_log_analysis(log_text):
     client = genai.Client(api_key=GEMINI_API_KEY)
     prompt = f"""You are a SOC analyst. Provide a detailed analysis of the given log data, including suspicious events, timeline, attack type, severity, affected systems and recommended actions.
