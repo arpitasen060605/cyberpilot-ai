@@ -4,6 +4,8 @@ from google import genai
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import UploadFile, File
 from fastapi.responses import FileResponse
+from pymongo import MongoClient
+from datetime import datetime
 from fpdf import FPDF
 import requests
 import chromadb
@@ -14,6 +16,10 @@ load_dotenv()
 
 VT_API_KEY = os.getenv("VT_API_KEY")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+MONGO_URI = os.getenv("MONGO_URI")
+mongo_client = MongoClient(MONGO_URI)
+db= mongo_client["cyberpilot"]
+investigations_collection = db["investigations"]
 app = FastAPI()
 
 app.add_middleware(
@@ -48,6 +54,13 @@ def investigate_ip(ip_address: str):
     }
 
     ai_summary = get_ai_summary(combined_data)
+
+    investigations_collection.insert_one({
+        "ip_address": ip_address,
+        "ai_summary": ai_summary,
+        "timestamp": datetime.now().isoformat()
+    })
+
     return {"raw_data": combined_data, "ai_summary": ai_summary}
 
 @app.get("/cve/{cve_id}")
@@ -132,6 +145,11 @@ def generate_report(summary: str, mitre_mapping: str, recommendations: str):
 
     return FileResponse("report.pdf", filename="incident_report.pdf")
 
+@app.get("/investigations")
+def get_investigations():
+    results = list(investigations_collection.find({}, {"_id": 0}).sort("timestamp", -1))
+    return {"investigations": results}
+
 def get_log_analysis(log_text):
     client = genai.Client(api_key=GEMINI_API_KEY)
     prompt = f"""You are a SOC analyst. Provide a detailed analysis of the given log data, including suspicious events, timeline, attack type, severity, affected systems and recommended actions.
@@ -207,4 +225,7 @@ def map_to_mitre(investigation_text):
         contents=prompt
     )
     return response.text
+
+
+
 
