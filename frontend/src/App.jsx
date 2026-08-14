@@ -1,45 +1,26 @@
-import {useState} from 'react'
-function App(){
-  const [ip, setIp] = useState('')
-  const [result, setResult] = useState(null)
-  const [loading, setLoading] = useState(false)
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Sidebar from './components/Sidebar'
+import IOCInvestigation from './pages/IOCInvestigation'
+import CVEExplainer from './pages/CVEExplainer'
+import LogInvestigation from './pages/LogInvestigation'
+import RAGChat from './pages/RAGChat'
 
-  const handleInvestigate = async () => {
-    setLoading(true)
-    setResult(null)
-
-    try {
-      const response = await fetch(`http://127.0.0.1:8000/investigate/ip/${ip}`)
-      const data = await response.json()
-      setResult(data)
-    } catch (error) {
-      console.error('Investigation failed:', error)
-    }finally {
-      setLoading(false)
-    }
-  }
+function App() {
   return (
-    <div>
-      <h1>CyberPilot AI</h1>
-
-      <input
-        type="text"
-        value={ip}
-        onChange={(e) => setIp(e.target.value)}
-        placeholder="Enter an IP address"
-      />
-
-      <button onClick={handleInvestigate} disabled={loading}>
-        {loading ? 'Investigating...' : 'Investigate'}
-      </button>
-
-      {result && (
-        <div>
-          <h2>AI Summary</h2>
-          <p>{result.ai_summary}</p>
+    <BrowserRouter>
+      <div style={{ display: 'flex' }}>
+        <Sidebar />
+        <div style={{ flex: 1, padding: '20px' }}>
+          <Routes>
+            <Route path="/" element={<IOCInvestigation />} />
+            <Route path="/cve" element={<CVEExplainer />} />
+            <Route path="/log" element={<LogInvestigation />} />
+            <Route path="/chat" element={<RAGChat />} />
+          </Routes>
         </div>
-      )}
-    </div>
+      </div>
+    </BrowserRouter>
   )
 }
+
 export default App
