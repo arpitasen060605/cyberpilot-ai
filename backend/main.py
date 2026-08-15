@@ -55,9 +55,12 @@ def investigate_ip(ip_address: str):
 
     ai_summary = get_ai_summary(combined_data)
 
+    verdict= extract_verdict(ai_summary)
+
     investigations_collection.insert_one({
         "ip_address": ip_address,
         "ai_summary": ai_summary,
+        "verdict": verdict,
         "timestamp": datetime.now().isoformat()
     })
 
@@ -225,6 +228,29 @@ def map_to_mitre(investigation_text):
         contents=prompt
     )
     return response.text
+
+def extract_verdict(ai_summary):
+    text = ai_summary.lower()
+    if "malicious" in text and "benign" not in text[:200]:
+        return "malicious"
+    elif "suspicious" in text:
+        return "suspicious"
+    else:
+        return "benign"    
+
+@app.get("/stats")
+def get_stats():
+    total = investigations_collection.count_documents({})
+    malicious = investigations_collection.count_documents({"verdict": "malicious"})
+    suspicious = investigations_collection.count_documents({"verdict": "suspicious"})
+    benign = investigations_collection.count_documents({"verdict": "benign"})
+
+    return {
+        "total_investigations": total,
+        "malicious": malicious,
+        "suspicious": suspicious,
+        "benign": benign
+    }
 
 
 

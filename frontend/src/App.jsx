@@ -4,6 +4,7 @@ import IOCInvestigation from './pages/IOCInvestigation'
 import CVEExplainer from './pages/CVEExplainer'
 import LogInvestigation from './pages/LogInvestigation'
 import RAGChat from './pages/RAGChat'
+import Dashboard from './pages/Dashboard'
 
 function App() {
   return (
@@ -12,7 +13,8 @@ function App() {
         <Sidebar />
         <main className="ml-64 p-8">
           <Routes>
-            <Route path="/" element={<IOCInvestigation />} />
+            <Route path='/' element={<Dashboard/>} />
+            <Route path="/ioc" element={<IOCInvestigation />} />
             <Route path="/cve" element={<CVEExplainer />} />
             <Route path="/log" element={<LogInvestigation />} />
             <Route path="/chat" element={<RAGChat />} />
