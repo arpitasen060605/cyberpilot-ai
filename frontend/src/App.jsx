@@ -8,16 +8,16 @@ import RAGChat from './pages/RAGChat'
 function App() {
   return (
     <BrowserRouter>
-      <div style={{ display: 'flex' }}>
+      <div className="min-h-screen bg-[#0d1117]">
         <Sidebar />
-        <div style={{ flex: 1, padding: '20px' }}>
+        <main className="ml-64 p-8">
           <Routes>
             <Route path="/" element={<IOCInvestigation />} />
             <Route path="/cve" element={<CVEExplainer />} />
             <Route path="/log" element={<LogInvestigation />} />
             <Route path="/chat" element={<RAGChat />} />
           </Routes>
-        </div>
+        </main>
       </div>
     </BrowserRouter>
   )
