@@ -11,7 +11,7 @@ function CVEExplainer() {
     setResult(null)
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/cve/${cveId}`)
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/cve/${cveId}`)
       const data = await response.json()
       setResult(data)
     } catch (error) {

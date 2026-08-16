@@ -11,7 +11,7 @@ function IOCInvestigation() {
     setResult(null)
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/investigate/ip/${ip}`)
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/investigate/ip/${ip}`)
       const data = await response.json()
       setResult(data)
     } catch (error) {

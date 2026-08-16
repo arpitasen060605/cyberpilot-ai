@@ -17,7 +17,7 @@ function RAGChat() {
 
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/chat?question=${encodeURIComponent(currentQuestion)}`,
+        `${import.meta.env.VITE_API_URL}/chat?question=${encodeURIComponent(currentQuestion)}`,
         { method: 'POST' }
       )
       const data = await response.json()

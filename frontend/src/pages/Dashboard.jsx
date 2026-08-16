@@ -13,12 +13,12 @@ function Dashboard() {
   const [investigations, setInvestigations] = useState([])
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/stats')
+    fetch(`${import.meta.env.VITE_API_URL}/stats`)
       .then((res) => res.json())
       .then((data) => setStats(data))
       .catch((err) => console.error('Failed to load stats:', err))
 
-    fetch('http://127.0.0.1:8000/investigations')
+    fetch(`${import.meta.env.VITE_API_URL}/investigations`)
       .then((res) => res.json())
       .then((data) => setInvestigations(data.investigations.slice(0, 5)))
       .catch((err) => console.error('Failed to load investigations:', err))
